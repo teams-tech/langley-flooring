@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floor Plan Dashboard</title>
+  <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Core palette - clean corporate */
+      --white: #ffffff;
+      --bg: #f8f9fb;
+      --surface: #ffffff;
+      --border: #e5e9f0;
+      --border-dark: #d1d9e6;
+
+      /* Navy - primary brand color */
+      --navy-900: #0f1c2e;
+      --navy-800: #1a2d47;
+      --navy-700: #243b5c;
+      --navy-600: #2e4a6f;
+      --navy: #365580;
+
+      /* Gold accent */
+      --gold: #c9a227;
+      --gold-light: #d4b44a;
+      --gold-dim: rgba(201, 162, 39, 0.12);
+      --gold-border: rgba(201, 162, 39, 0.3);
+
+      /* Text hierarchy */
+      --text-primary: #1a2d47;
+      --text-secondary: #5a6a7e;
+      --text-tertiary: #8b97a8;
+
+      /* Status colors */
+      --success: #2e7d5a;
+      --success-bg: #e8f5ef;
+      --warning: #b8860b;
+      --warning-bg: #fef9e7;
+      --danger: #c0392b;
+      --danger-bg: #fdecea;
+
+      /* Lender colors */
+      --blue: #2874a6;
+      --blue-bg: #e8f4fd;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'D-DIN', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Main container */
+    .dashboard {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .brand-tag {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--navy-800);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .brand-tag::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .close-btn:hover {
+      border-color: var(--border-dark);
+      color: var(--text-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .close-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Header section */
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .vehicle-info h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .lender-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .lender-badge.afc {
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+
+    .lender-badge.nextgear {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .refresh-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'D-DIN', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .refresh-btn:hover {
+      background: var(--navy-800);
+      border-color: var(--navy-800);
+      color: white;
+    }
+
+    .refresh-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Vehicle identifiers row */
+    .vehicle-ids {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .id-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      transition: all 0.2s ease;
+    }
+
+    .id-field:hover {
+      border-color: var(--border-dark);
+    }
+
+    .id-field .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .id-field .value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      user-select: all;
+      cursor: text;
+    }
+
+    .id-field .copy-btn {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .id-field .copy-btn:hover {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+
+    .id-field .copy-btn.copied {
+      color: var(--success);
+    }
+
+    .id-field .copy-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Main card */
+    .main-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    /* Alert banners */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      background: var(--danger-bg);
+      border-bottom: 1px solid rgba(192,57,43,0.15);
+    }
+
+    .alert-banner .message {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--danger);
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+    }
+
+    .alert-banner .icon {
+      width: 22px;
+      height: 22px;
+      background: var(--danger);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .alert-banner .amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--danger);
+    }
+
+    /* Days floored banner */
+    .days-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .days-banner.good {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .days-banner.warn {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .days-banner.bad {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .days-banner .days-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .days-banner .days-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* Hero section with payoff */
+    .hero {
+      padding: 40px;
+      text-align: center;
+      background: var(--navy-800);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+    }
+
+    .total-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 12px;
+    }
+
+    .total-amount {
+      font-size: 56px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .total-amount .currency {
+      font-size: 32px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      vertical-align: top;
+      margin-right: 2px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-badge.active {
+      background: rgba(40, 116, 166, 0.2);
+      color: #7ec8e3;
+    }
+
+    .status-badge.paid {
+      background: rgba(46, 125, 90, 0.2);
+      color: #6dd5a0;
+    }
+
+    .status-badge.overdue {
+      background: rgba(192, 57, 43, 0.2);
+      color: #e57373;
+    }
+
+    .status-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .stat {
+      padding: 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      transition: background 0.2s ease;
+    }
+
+    .stat:last-child {
+      border-right: none;
+    }
+
+    .stat:hover {
+      background: var(--bg);
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -1px;
+    }
+
+    .stat-value.positive {
+      color: var(--success);
+    }
+
+    .stat-value.negative {
+      color: var(--danger);
+    }
+
+    .stat-note {
+      font-size: 10px;
+      margin-top: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+    }
+
+    /* Section header */
+    .section-header {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-tertiary);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .section-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--gold);
+    }
+
+    /* Loan details section */
+    .details-section {
+      padding: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .detail-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 8px;
+      padding: 16px 18px;
+      transition: all 0.2s ease;
+    }
+
+    .detail-card:hover {
+      background: var(--surface);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .detail-name {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .detail-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Curtailment section */
+    .curtailment-section {
+      padding: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .curtailment-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .curtailment-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .curtailment-card.paid {
+      background: var(--success-bg);
+      border-color: var(--success);
+    }
+
+    .curtailment-card.overdue {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+    }
+
+    .curtailment-card.upcoming {
+      background: var(--warning-bg);
+      border-color: var(--warning);
+    }
+
+    .curtailment-day {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .curtailment-card.paid .curtailment-day { color: var(--success); }
+    .curtailment-card.overdue .curtailment-day { color: var(--danger); }
+    .curtailment-card.upcoming .curtailment-day { color: var(--warning); }
+
+    .curtailment-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .curtailment-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Payments table section */
+    .payments-section {
+      padding: 28px;
+    }
+
+    .payments-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .payments-table thead {
+      background: var(--navy-800);
+    }
+
+    .payments-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.7);
+      padding: 14px 16px;
+    }
+
+    .payments-table th:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .payments-table th:last-child {
+      text-align: right;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .payments-table td {
+      padding: 16px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .payments-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .payments-table tbody tr:hover {
+      background: var(--bg);
+    }
+
+    .payment-type {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .payment-type.payoff {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .payment-type.curtailment {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .payment-type.interest {
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+
+    .payment-type.payment {
+      background: var(--bg);
+      color: var(--text-secondary);
+    }
+
+    .payment-amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* Lender tabs */
+    .lender-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .lender-tab {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .lender-tab:hover:not(.active) {
+      background: var(--bg);
+    }
+
+    .lender-tab.active {
+      border-color: var(--navy-800);
+      background: var(--navy-800);
+      color: white;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 80px 40px;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      stroke: var(--text-tertiary);
+      margin-bottom: 20px;
+      opacity: 0.4;
+    }
+
+    .empty-state h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-timestamp {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--navy-800);
+    }
+
+    .brand::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 2px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .floor-plan-section {
+      display: none;
+    }
+
+    .floor-plan-section.active {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard {
+        padding: 16px;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .vehicle-info h1 {
+        font-size: 22px;
+      }
+
+      .vehicle-ids {
+        flex-wrap: wrap;
+      }
+
+      .id-field {
+        flex: 1;
+        min-width: 140px;
+      }
+
+      .total-amount {
+        font-size: 42px;
+      }
+
+      .total-amount .currency {
+        font-size: 24px;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .stat {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stat:last-child {
+        border-bottom: none;
+      }
+
+      .details-grid,
+      .curtailment-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard" id="app"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const data = {
+      year_make_model: params.get('year_make_model') || 'Unknown Vehicle',
+      stock_number: params.get('stock_number'),
+      vin: params.get('vin')
+    };
+
+    // Parse floor plan data
+    let afcFloorPlan = null;
+    let ngFloorPlan = null;
+    let afcPayments = [];
+    let ngPayments = [];
+
+    try {
+      afcFloorPlan = JSON.parse(params.get('afc_floor_plan') || 'null');
+    } catch (e) { afcFloorPlan = null; }
+
+    try {
+      ngFloorPlan = JSON.parse(params.get('ng_floor_plan') || 'null');
+    } catch (e) { ngFloorPlan = null; }
+
+    try {
+      afcPayments = JSON.parse(params.get('afc_payments') || '[]');
+    } catch (e) { afcPayments = []; }
+
+    try {
+      ngPayments = JSON.parse(params.get('ng_payments') || '[]');
+    } catch (e) { ngPayments = []; }
+
+    let activeLender = afcFloorPlan ? 'afc' : (ngFloorPlan ? 'ng' : null);
+
+    const fmt = (v) => {
+      if (!v && v !== 0) return '0.00';
+      return Number(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
+    const fmtShort = (v) => {
+      if (!v && v !== 0) return '$0';
+      return '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    };
+
+    const fmtPct = (v) => v ? `${Number(v).toFixed(2)}%` : '—';
+
+    const fmtDate = (v) => {
+      if (!v) return '—';
+      const d = new Date(v);
+      return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+
+    function getStatusClass(fp) {
+      if (fp.status === 'paid_off' || fp.status === 'completed') return 'paid';
+      if (fp.is_overdue) return 'overdue';
+      return 'active';
+    }
+
+    function getStatusLabel(fp) {
+      if (fp.status === 'paid_off' || fp.status === 'completed') return 'Paid Off';
+      if (fp.is_overdue) return 'Overdue';
+      return 'Active';
+    }
+
+    function getDaysClass(days) {
+      if (days > 90) return 'bad';
+      if (days > 60) return 'warn';
+      return 'good';
+    }
+
+    function calculateCurtailment(fp) {
+      const fundedAmount = parseFloat(fp.funded_amount) || 0;
+      const daysFloored = fp.days_floored || 0;
+      const principalPaid = parseFloat(fp.principal_paid) || 0;
+
+      let requiredPrincipalPaid = 0;
+      let nextCurtailmentPercent = 0;
+      let nextCurtailmentDay = 0;
+
+      if (daysFloored >= 120) {
+        requiredPrincipalPaid = fundedAmount * 0.25;
+        nextCurtailmentPercent = 0;
+        nextCurtailmentDay = 0;
+      } else if (daysFloored >= 90) {
+        requiredPrincipalPaid = fundedAmount * 0.15;
+        nextCurtailmentPercent = 10;
+        nextCurtailmentDay = 120;
+      } else if (daysFloored >= 60) {
+        requiredPrincipalPaid = fundedAmount * 0.05;
+        nextCurtailmentPercent = 10;
+        nextCurtailmentDay = 90;
+      } else {
+        requiredPrincipalPaid = 0;
+        nextCurtailmentPercent = 5;
+        nextCurtailmentDay = 60;
+      }
+
+      const nextCurtailmentAmount = fundedAmount * (nextCurtailmentPercent / 100);
+      const behindOnCurtailment = principalPaid < requiredPrincipalPaid;
+      const amountBehind = requiredPrincipalPaid - principalPaid;
+
+      return {
+        nextCurtailmentAmount,
+        nextCurtailmentPercent,
+        nextCurtailmentDay,
+        behindOnCurtailment,
+        amountBehind: behindOnCurtailment ? amountBehind : 0,
+        schedule: [
+          { day: 60, pct: 5, required: fundedAmount * 0.05, paid: daysFloored >= 60 && principalPaid >= fundedAmount * 0.05 },
+          { day: 90, pct: 10, required: fundedAmount * 0.10, paid: daysFloored >= 90 && principalPaid >= fundedAmount * 0.15 },
+          { day: 120, pct: 10, required: fundedAmount * 0.10, paid: daysFloored >= 120 && principalPaid >= fundedAmount * 0.25 }
+        ]
+      };
+    }
+
+    function renderFloorPlan(fp, payments, lender) {
+      if (!fp) return '';
+
+      const statusClass = getStatusClass(fp);
+      const statusLabel = getStatusLabel(fp);
+      const daysClass = getDaysClass(fp.days_floored || 0);
+      const curt = calculateCurtailment(fp);
+
+      return `
+        ${curt.behindOnCurtailment && curt.amountBehind > 0 ? `
+          <div class="alert-banner">
+            <div class="message">
+              <span class="icon">!</span>
+              <span>Behind on Curtailment</span>
+            </div>
+            <span class="amount">${fmtShort(curt.amountBehind)}</span>
+          </div>
+        ` : ''}
+
+        <div class="days-banner ${daysClass}">
+          <span class="days-label">Days Floored</span>
+          <span class="days-value">${fp.days_floored || 0}</span>
+        </div>
+
+        <div class="hero">
+          <div class="total-label">Estimated Payoff</div>
+          <div class="total-amount"><span class="currency">$</span>${fmt(fp.estimated_payoff)}</div>
+          <div class="status-badge ${statusClass}">
+            <span class="dot"></span>
+            ${statusLabel}
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-label">Principal</div>
+            <div class="stat-value">${fmtShort(fp.principal_balance)}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Interest</div>
+            <div class="stat-value">${fmtShort(fp.accrued_interest)}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Fees</div>
+            <div class="stat-value">${fmtShort(fp.accrued_fees)}</div>
+          </div>
+        </div>
+
+        <div class="curtailment-section">
+          <div class="section-header">Curtailment Schedule</div>
+          <div class="curtailment-grid">
+            ${curt.schedule.map(s => {
+              const isPaid = s.paid;
+              const isCurrent = !isPaid && fp.days_floored < s.day && curt.nextCurtailmentDay === s.day;
+              const isOverdue = !isPaid && fp.days_floored >= s.day;
+              const cls = isPaid ? 'paid' : (isOverdue ? 'overdue' : (isCurrent ? 'upcoming' : ''));
+              return `
+                <div class="curtailment-card ${cls}">
+                  <div class="curtailment-day">Day ${s.day}</div>
+                  <div class="curtailment-pct">${s.pct}%</div>
+                  <div class="curtailment-amount">${fmtShort(s.required)}</div>
+                </div>
+              `;
+            }).join('')}
+            <div class="curtailment-card">
+              <div class="curtailment-day">Next Due</div>
+              <div class="curtailment-pct" style="font-size: 14px;">${fmtDate(fp.next_curtailment_date)}</div>
+              <div class="curtailment-amount">${fmtShort(curt.nextCurtailmentAmount)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <div class="section-header">Loan Details</div>
+          <div class="details-grid">
+            <div class="detail-card">
+              <div class="detail-name">Funded</div>
+              <div class="detail-value">${fmtShort(fp.funded_amount)}</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-name">Floor Date</div>
+              <div class="detail-value">${fmtDate(fp.floor_date)}</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-name">Rate</div>
+              <div class="detail-value">${fmtPct(fp.interest_rate)}</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-name">Total Cost</div>
+              <div class="detail-value">${fmtShort(fp.total_flooring_cost)}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="payments-section">
+          <div class="section-header">Payment History</div>
+          <table class="payments-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Principal</th>
+                <th>Interest</th>
+                <th>Fees</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${payments.length > 0 ? payments.map(p => `
+                <tr>
+                  <td>${fmtDate(p.payment_date)}</td>
+                  <td>
+                    <span class="payment-type ${(p.payment_type || 'payment').toLowerCase()}">${p.payment_type || 'Payment'}</span>
+                  </td>
+                  <td class="payment-amount">${fmtShort(p.principal)}</td>
+                  <td class="payment-amount">${fmtShort(p.interest)}</td>
+                  <td class="payment-amount">${fmtShort(p.fees)}</td>
+                  <td class="payment-amount">${fmtShort(p.total)}</td>
+                </tr>
+              `).join('') : `
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-tertiary); padding: 40px;">
+                    No payment history available
+                  </td>
+                </tr>
+              `}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function switchLender(lender) {
+      activeLender = lender;
+      render();
+    }
+
+    function copyToClipboard(elementId, button) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        button.classList.add('copied');
+        button.innerHTML = `
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        `;
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = `
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          `;
+        }, 1500);
+      });
+    }
+
+    function render() {
+      const hasFloorPlan = afcFloorPlan || ngFloorPlan;
+      const hasBoth = afcFloorPlan && ngFloorPlan;
+
+      if (!hasFloorPlan) {
+        document.getElementById('app').innerHTML = `
+          <div class="top-bar">
+            <div class="brand-tag">Floor Plan Dashboard</div>
+            <button class="close-btn" title="Close">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="header">
+            <div class="vehicle-info">
+              <h1>${data.year_make_model}</h1>
+            </div>
+          </div>
+          <div class="main-card">
+            <div class="empty-state">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <h2>No Floor Plan Found</h2>
+              <p>This vehicle does not have an active floor plan with AFC or NextGear.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const lenderName = activeLender === 'afc' ? 'AFC' : 'NextGear';
+      const lenderClass = activeLender === 'afc' ? 'afc' : 'nextgear';
+
+      document.getElementById('app').innerHTML = `
+        <div class="top-bar">
+          <div class="brand-tag">Floor Plan Dashboard</div>
+          <button class="close-btn" title="Close">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="header">
+          <div class="header-top">
+            <div class="vehicle-info">
+              <h1>${data.year_make_model}</h1>
+              <span class="lender-badge ${lenderClass}">${lenderName}</span>
+            </div>
+            <button class="refresh-btn" onclick="location.reload()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              Refresh
+            </button>
+          </div>
+          <div class="vehicle-ids">
+            <div class="id-field">
+              <span class="label">Stock</span>
+              <span class="value" id="stock-value">${data.stock_number || '—'}</span>
+              <button class="copy-btn" onclick="copyToClipboard('stock-value', this)" title="Copy stock number">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="id-field">
+              <span class="label">VIN</span>
+              <span class="value" id="vin-value">${data.vin || '—'}</span>
+              <button class="copy-btn" onclick="copyToClipboard('vin-value', this)" title="Copy VIN">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        ${hasBoth ? `
+          <div class="lender-tabs">
+            <button class="lender-tab ${activeLender === 'afc' ? 'active' : ''}" onclick="switchLender('afc')">AFC</button>
+            <button class="lender-tab ${activeLender === 'ng' ? 'active' : ''}" onclick="switchLender('ng')">NextGear</button>
+          </div>
+        ` : ''}
+
+        <div class="main-card">
+          <div class="floor-plan-section ${activeLender === 'afc' ? 'active' : ''}" id="afc-section">
+            ${afcFloorPlan ? renderFloorPlan(afcFloorPlan, afcPayments, 'AFC') : ''}
+          </div>
+
+          <div class="floor-plan-section ${activeLender === 'ng' ? 'active' : ''}" id="ng-section">
+            ${ngFloorPlan ? renderFloorPlan(ngFloorPlan, ngPayments, 'NextGear') : ''}
+          </div>
+
+          <div class="footer">
+            <div class="footer-timestamp">Last updated: ${new Date().toLocaleString()}</div>
+            <span class="brand">Auto Solution</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Make functions available globally
+    window.switchLender = switchLender;
+    window.copyToClipboard = copyToClipboard;
+
+    render();
+  </script>
+</body>
+</html>
